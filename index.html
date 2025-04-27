@@ -11,91 +11,176 @@
             box-sizing: border-box;
         }
         body {
-            background: #f5f5f5;
+            background: #f8f9fa;
             min-height: 100vh;
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: #333;
-            padding: 40px 20px;
+            color: #2c3e50;
+            padding: 60px 20px;
+            line-height: 1.6;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 40px;
         }
         header {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 80px;
+            position: relative;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: #2c3e50;
+            opacity: 0.2;
         }
         h1 {
-            font-size: 2.5em;
-            font-weight: 300;
+            font-size: 3.2em;
+            font-weight: 200;
             margin-bottom: 20px;
             color: #2c3e50;
+            letter-spacing: 0.1em;
         }
         .subtitle {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: #7f8c8d;
+            font-weight: 300;
+            letter-spacing: 0.05em;
         }
         .works-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 60px;
             padding: 20px;
         }
         .work-card {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             color: inherit;
+            position: relative;
         }
         .work-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
         }
         .card-preview {
             width: 100%;
-            height: 200px;
-            background: #eee;
+            height: 240px;
+            background: #fafafa;
             position: relative;
             overflow: hidden;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
-        .preview-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .card-content {
+            padding: 30px;
+        }
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+        .card-description {
+            font-size: 0.95em;
+            line-height: 1.7;
+            color: #7f8c8d;
+            font-weight: 300;
+        }
+        /* GitHub链接样式更新 */
+        .github-link {
+            position: static;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 60px auto 40px;
+            padding: 12px 24px;
+            background: rgba(44, 62, 80, 0.95);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 0.95em;
+            letter-spacing: 0.02em;
+            width: fit-content;
+        }
+        
+        .github-link:hover {
+            transform: translateY(-2px);
+            background: rgba(44, 62, 80, 1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .github-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.9;
+        }
+        
+        /* 预览内容样式优化 */
+        .preview-me, .preview-poem, .preview-book {
             width: 100%;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            color: #666;
-        }
-        .card-content {
             padding: 20px;
         }
-        .card-title {
-            font-size: 1.4em;
-            margin-bottom: 10px;
-            color: #2c3e50;
+        
+        .preview-me {
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            font-size: 18px;
+            letter-spacing: 0.1em;
         }
-        .card-description {
-            font-size: 0.95em;
-            line-height: 1.6;
-            color: #666;
+        
+        .preview-me span {
+            margin: 4px;
+            opacity: 0.8;
+            transition: all 0.3s ease;
         }
+        
+        .preview-poem {
+            background: linear-gradient(135deg, #f6f8f9 0%, #f1f4f6 100%);
+            font-family: monospace;
+            font-size: 16px;
+        }
+        
+        .preview-book {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f2f3f5 100%);
+            perspective: 1000px;
+        }
+        
+        .book-page {
+            width: 35%;
+            height: 70%;
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin: 0 5px;
+        }
+
         @media (max-width: 768px) {
-            .works-grid {
-                grid-template-columns: 1fr;
-                padding: 10px;
+            body {
+                padding: 40px 15px;
             }
-            header {
-                margin-bottom: 40px;
+            .container {
+                padding: 0 20px;
             }
             h1 {
-                font-size: 2em;
+                font-size: 2.5em;
+            }
+            .works-grid {
+                gap: 40px;
             }
         }
     </style>
@@ -103,13 +188,16 @@
 <body>
     <div class="container">
         <header>
-            <h1>镜像之地</h1>
+            <h1>镜野计划</h1>
             <p class="subtitle">数字艺术作品集</p>
         </header>
         <div class="works-grid">
             <a href="me.html" class="work-card">
                 <div class="card-preview">
-                    <div class="preview-animation">动态文字艺术</div>
+                    <div class="preview-me">
+                        <span>明</span><span>月</span><span>松</span><span>间</span><span>照</span><br>
+                        <span>清</span><span>风</span><span>拂</span><span>山</span><span>岗</span>
+                    </div>
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">动态文字艺术</h2>
@@ -118,7 +206,9 @@
             </a>
             <a href="poem.html" class="work-card">
                 <div class="card-preview">
-                    <div class="preview-animation">诗歌与乱码艺术</div>
+                    <div class="preview-poem">
+                        <span>0101</span><span>诗</span><span>歌</span><span>1010</span>
+                    </div>
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">诗歌与乱码艺术</h2>
@@ -127,7 +217,10 @@
             </a>
             <a href="test.html" class="work-card">
                 <div class="card-preview">
-                    <div class="preview-animation">双页书籍效果</div>
+                    <div class="preview-book">
+                        <div class="book-page"></div>
+                        <div class="book-page"></div>
+                    </div>
                 </div>
                 <div class="card-content">
                     <h2 class="card-title">双页书籍效果</h2>
@@ -136,5 +229,11 @@
             </a>
         </div>
     </div>
+    <a href="https://github.com/Missmudodo/MirrorLand" class="github-link" target="_blank">
+        <svg class="github-icon" viewBox="0 0 16 16" fill="white">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        访问我的GitHub
+    </a>
 </body>
 </html>
