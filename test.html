@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双页书籍效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        .book {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            width: 1000px;
+            height: 700px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        .page {
+            padding: 40px;
+            border-right: 1px solid #eee;
+        }
+        .left-page {
+            line-height: 2.2;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            letter-spacing: 1px;
+        }
+        .right-page {
+            font-family: monospace;
+            font-size: 14px;
+            overflow: hidden;
+            letter-spacing: 1px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .poem {
+            margin-bottom: 30px;
+        }
+        .poem-title {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 300;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="book">
+        <div class="page left-page">
+            <div class="poem">
+                <h2 class="poem-title">浮游刻度</h2>
+                咖啡渍在便笺边缘洇成褐色群岛<br>
+                有人收集地铁玻璃上重叠的指纹<br>
+                用体温孵出候鸟迁徙的弧线<br>
+                窗帘褶皱里<br>
+                黄昏正往第三枚纽扣渗漏<br>
+                你数着雨滴击穿电话忙音的间隙<br>
+                直到钟表长出铜绿<br>
+                苔藓漫过视网膜凹槽<br>
+                碎冰在威士忌里凿开微型溶洞<br>
+                电梯下行时带走了所有未完成的比喻<br>
+                蝴蝶突然吞下旋转的钥匙孔<br>
+                在锁骨凹陷处<br>
+                筑起透明蜂巢<br>
+            </div>
+        </div>
+        <div class="page right-page" id="rightPage"></div>
+    </div>
+    <script>
+        function generateRandomChar() {
+            const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            return chars[Math.floor(Math.random() * chars.length)];
+        }
+
+        function generateGarbledText() {
+            const rightPage = document.getElementById('rightPage');
+            let text = '';
+            const pageHeight = rightPage.clientHeight;
+            const lineHeight = 20; // 估计的行高
+            const charsPerLine = Math.floor(rightPage.clientWidth / 10); // 估计每个字符宽度为10px
+            const maxLines = Math.floor(pageHeight / lineHeight);
+            const totalChars = maxLines * charsPerLine;
+            
+            for (let i = 0; i < totalChars; i++) {
+                text += generateRandomChar();
+                if (i % charsPerLine === 0 && i > 0) text += '\n';
+            }
+            rightPage.textContent = text;
+        }
+
+        generateGarbledText();
+        setInterval(generateGarbledText, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态文字艺术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: white;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // 设置canvas尺寸为窗口大小
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // 文字类
+        class FloatingText {
+            constructor() {
+                // 将画布分成网格，使文字初始分布更均匀
+                const gridSize = 10;
+                const cellWidth = canvas.width / gridSize;
+                const cellHeight = canvas.height / gridSize;
+                const gridX = Math.floor(Math.random() * gridSize);
+                const gridY = Math.floor(Math.random() * gridSize);
+                
+                this.x = (gridX + 0.3 + Math.random() * 0.4) * cellWidth;
+                this.y = (gridY + 0.3 + Math.random() * 0.4) * cellHeight;
+                this.fontSize = 24 + Math.random() * 36;
+                this.text = this.getRandomText();
+                this.angle = Math.random() * Math.PI * 2;
+                // 降低移动速度使动画更平滑
+                this.velocity = {
+                    x: (Math.random() - 0.5) * 0.5,
+                    y: (Math.random() - 0.5) * 0.5
+                };
+                this.alpha = Math.random() * 0.5 + 0.5;
+                this.targetAlpha = Math.random() * 0.5 + 0.5;
+                this.centerX = canvas.width / 2;
+                this.centerY = canvas.height / 2;
+                this.isGathering = false;
+                this.gatherSpeed = 0.01;
+            }
+
+            getRandomText() {
+                const characters = [
+                    '明', '月', '松', '间', '照', '清', '风', '拂', '山', '岗',
+                    '飞', '鸟', '没', '孤', '云', '江', '南', '可', '采', '莲',
+                    '落', '花', '意', '随', '流', '水', '春', '度', '玉', '关',
+                    '星', '河', '璀', '璨', '梦', '来', '卷', '舒', '日', '长',
+                    '色', '空', '蒙', '雨', '奇', '潮', '平', '两', '岸', '阔',
+                    '疏', '影', '横', '斜', '浅', '红', '情', '物', '泥', '护',
+                    '沧', '海', '珠', '泪', '蓝', '田', '暖', '生', '烟', '青',
+                    '隐', '迢', '秋', '尽', '草', '凋', '起', '白', '箭', '疾',
+                    '人', '生', '初', '见', '事', '悲', '画', '扇', '留', '住',
+                    '朱', '颜', '辞', '镜', '树'
+                ];
+                return characters[Math.floor(Math.random() * characters.length)];
+            }
+
+            update() {
+                // 平滑移动
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                
+                // 边界检查 - 使用平滑过渡
+                if (this.x < 0) {
+                    this.x = canvas.width;
+                    this.y = Math.random() * canvas.height;
+                }
+                if (this.x > canvas.width) {
+                    this.x = 0;
+                    this.y = Math.random() * canvas.height;
+                }
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+                if (this.y > canvas.height) {
+                    this.y = 0;
+                    this.x = Math.random() * canvas.width;
+                }
+                
+                // 缓慢旋转
+                this.angle += 0.01;
+
+                // 平滑的透明度变化
+                const alphaDiff = this.targetAlpha - this.alpha;
+                this.alpha += alphaDiff * 0.05;
+                if (Math.abs(alphaDiff) < 0.01) {
+                    this.targetAlpha = 0.3 + Math.random() * 0.4; // 降低透明度范围
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.font = `${this.fontSize}px 'PingFang SC', 'Microsoft YaHei', sans-serif`;
+                ctx.fillStyle = `rgba(0, 0, 0, ${this.alpha})`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.text, 0, 0);
+                ctx.restore();
+            }
+        }
+
+        // 创建文字数组
+        const texts = Array.from({ length: 100 }, () => new FloatingText());
+
+        // 动画循环
+        function animate() {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            texts.forEach(text => {
+                text.update();
+                text.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

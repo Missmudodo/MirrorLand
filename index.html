@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>镜像之地 | 作品集</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f5f5f5;
+            min-height: 100vh;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: #333;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            padding: 20px;
+        }
+        .work-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        .work-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .card-preview {
+            width: 100%;
+            height: 200px;
+            background: #eee;
+            position: relative;
+            overflow: hidden;
+        }
+        .preview-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: #666;
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        .card-description {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #666;
+        }
+        @media (max-width: 768px) {
+            .works-grid {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            header {
+                margin-bottom: 40px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>镜像之地</h1>
+            <p class="subtitle">数字艺术作品集</p>
+        </header>
+        <div class="works-grid">
+            <a href="me.html" class="work-card">
+                <div class="card-preview">
+                    <div class="preview-animation">动态文字艺术</div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">动态文字艺术</h2>
+                    <p class="card-description">探索文字的流动之美，每个字符都在画布上自由舞动，创造出独特的视觉韵律。</p>
+                </div>
+            </a>
+            <a href="poem.html" class="work-card">
+                <div class="card-preview">
+                    <div class="preview-animation">诗歌与乱码艺术</div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">诗歌与乱码艺术</h2>
+                    <p class="card-description">诗歌与数字符号的交织，在虚实之间构建一个充满想象的空间。</p>
+                </div>
+            </a>
+            <a href="test.html" class="work-card">
+                <div class="card-preview">
+                    <div class="preview-animation">双页书籍效果</div>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">双页书籍效果</h2>
+                    <p class="card-description">模拟实体书籍的阅读体验，左右对开的页面呈现诗歌与随机符号的对话。</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
