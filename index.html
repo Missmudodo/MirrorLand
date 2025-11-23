@@ -4,8 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>镜像之地 | 作品集</title>
+    <title>镜像之地 | MirrorLand</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #fdfbf0;
+            --text-primary: #3e2723;
+            --text-secondary: #5d4037;
+            --accent-color: #8B4513;
+            --card-bg: #fffef8;
+            --shadow-soft: 0 10px 30px rgba(62, 39, 35, 0.05);
+            --shadow-hover: 0 20px 40px rgba(62, 39, 35, 0.12);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,12 +24,14 @@
         }
 
         body {
-            background: #f8f9fa;
+            background-color: var(--bg-color);
             min-height: 100vh;
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            color: #2c3e50;
-            padding: 60px 20px;
-            line-height: 1.6;
+            font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+            color: var(--text-primary);
+            padding: 80px 20px;
+            line-height: 1.8;
+            background-image: radial-gradient(#e8e0c8 1px, transparent 1px);
+            background-size: 30px 30px;
         }
 
         .container {
@@ -29,171 +42,282 @@
 
         header {
             text-align: center;
-            margin-bottom: 80px;
+            margin-bottom: 100px;
             position: relative;
         }
 
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: #2c3e50;
-            opacity: 0.2;
-        }
-
         h1 {
-            font-size: 3.2em;
-            font-weight: 200;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            letter-spacing: 0.1em;
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            letter-spacing: 0.2em;
+            text-shadow: 2px 2px 0px rgba(139, 69, 19, 0.1);
         }
 
         .subtitle {
-            font-size: 1.1em;
-            color: #7f8c8d;
+            font-size: 1.2em;
+            color: var(--text-secondary);
             font-weight: 300;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            border-top: 1px solid var(--accent-color);
+            border-bottom: 1px solid var(--accent-color);
+            display: inline-block;
+            padding: 10px 30px;
+            margin-top: 10px;
         }
 
         .works-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 60px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 50px;
             padding: 20px;
         }
 
         .work-card {
-            background: white;
-            border-radius: 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            border-radius: 4px;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.03);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-decoration: none;
             color: inherit;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .work-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(139, 69, 19, 0.3);
         }
 
         .card-preview {
             width: 100%;
-            height: 240px;
-            background: #fafafa;
+            height: 260px;
+            background: #fcfcfc;
             position: relative;
             overflow: hidden;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px dashed rgba(139, 69, 19, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .card-content {
-            padding: 30px;
+            padding: 35px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
         }
 
         .card-title {
-            font-size: 1.4em;
+            font-size: 1.6em;
             margin-bottom: 15px;
-            color: #2c3e50;
-            font-weight: 400;
-            letter-spacing: 0.03em;
+            color: var(--accent-color);
+            font-weight: 500;
+            letter-spacing: 0.1em;
         }
 
         .card-description {
             font-size: 0.95em;
-            line-height: 1.7;
-            color: #7f8c8d;
+            line-height: 1.8;
+            color: var(--text-secondary);
             font-weight: 300;
         }
 
-        /* GitHub链接样式更新 */
-        .github-link {
-            position: static;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin: 60px auto 40px;
-            padding: 12px 24px;
-            background: rgba(44, 62, 80, 0.95);
-            color: white;
-            text-decoration: none;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            font-size: 0.95em;
-            letter-spacing: 0.02em;
-            width: fit-content;
-        }
+        /* --- Preview Effects --- */
 
-        .github-link:hover {
-            transform: translateY(-2px);
-            background: rgba(44, 62, 80, 1);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .github-icon {
-            width: 20px;
-            height: 20px;
-            opacity: 0.9;
-        }
-
-        /* 预览内容样式优化 */
-        .preview-me,
-        .preview-poem,
-        .preview-book {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
+        /* 1. Dynamic Text (Me) */
         .preview-me {
-            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
-            font-size: 18px;
-            letter-spacing: 0.1em;
+            font-size: 24px;
+            font-weight: 300;
+            color: var(--text-primary);
+            letter-spacing: 0.2em;
         }
 
         .preview-me span {
-            margin: 4px;
-            opacity: 0.8;
-            transition: all 0.3s ease;
+            display: inline-block;
+            animation: floatText 3s ease-in-out infinite;
         }
 
+        .preview-me span:nth-child(odd) {
+            animation-delay: 0s;
+        }
+
+        .preview-me span:nth-child(even) {
+            animation-delay: 1.5s;
+        }
+
+        @keyframes floatText {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.7;
+            }
+
+            50% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+
+        /* 2. Poem & Glitch */
         .preview-poem {
-            background: linear-gradient(135deg, #f6f8f9 0%, #f1f4f6 100%);
-            font-family: monospace;
-            font-size: 16px;
+            font-family: "Courier New", monospace;
+            font-size: 18px;
+            color: #555;
+            position: relative;
         }
 
+        .preview-poem::before {
+            content: "010101";
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            opacity: 0.1;
+            font-size: 40px;
+        }
+
+        .preview-poem span {
+            display: inline-block;
+            position: relative;
+        }
+
+        .preview-poem span:hover {
+            color: var(--accent-color);
+            text-shadow: 2px 0 0 rgba(255, 0, 0, 0.3), -2px 0 0 rgba(0, 0, 255, 0.3);
+        }
+
+        /* 3. Book Effect */
         .preview-book {
-            background: linear-gradient(135deg, #f8f9fa 0%, #f2f3f5 100%);
-            perspective: 1000px;
+            perspective: 800px;
         }
 
-        .book-page {
-            width: 35%;
-            height: 70%;
-            background: white;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            margin: 0 5px;
+        .book-mockup {
+            width: 120px;
+            height: 160px;
+            background: #fff;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(-25deg) rotateX(10deg);
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid #eee;
+        }
+
+        .book-mockup::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0) 10%);
+        }
+
+        .book-mockup::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: -5px;
+            width: 5px;
+            height: 100%;
+            background: #ddd;
+            transform: skewY(45deg);
+            transform-origin: top right;
+        }
+
+        /* 4. Lhasa Map */
+        .preview-map {
+            width: 100%;
+            height: 100%;
+            background: #f0e6d2;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: linear-gradient(#d7ccc8 1px, transparent 1px), linear-gradient(90deg, #d7ccc8 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: rotate(15deg);
+            opacity: 0.3;
+        }
+
+        .map-pin {
+            width: 24px;
+            height: 24px;
+            background: #cc3300;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            position: absolute;
+            top: 45%;
+            left: 48%;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            animation: bouncePin 2s infinite;
+        }
+
+        .map-pin::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes bouncePin {
+
+            0%,
+            100% {
+                transform: rotate(-45deg) translateY(0);
+            }
+
+            50% {
+                transform: rotate(-45deg) translateY(-10px);
+            }
+        }
+
+        /* Footer */
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 80px;
+            padding: 12px 30px;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            letter-spacing: 0.1em;
+            background: transparent;
+        }
+
+        .github-link:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        .github-icon path {
+            fill: currentColor;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 40px 15px;
-            }
-
-            .container {
-                padding: 0 20px;
+                padding: 40px 20px;
             }
 
             h1 {
@@ -201,7 +325,7 @@
             }
 
             .works-grid {
-                gap: 40px;
+                gap: 30px;
             }
         }
     </style>
@@ -211,9 +335,11 @@
     <div class="container">
         <header>
             <h1>镜野计划</h1>
-            <p class="subtitle">数字艺术作品集</p>
+            <span class="subtitle">MIRROR LAND</span>
         </header>
+
         <div class="works-grid">
+            <!-- 1. 动态文字 -->
             <a href="me.html" class="work-card">
                 <div class="card-preview">
                     <div class="preview-me">
@@ -222,63 +348,64 @@
                     </div>
                 </div>
                 <div class="card-content">
-                    <h2 class="card-title">动态文字艺术</h2>
-                    <p class="card-description">探索文字的流动之美，每个字符都在画布上自由舞动，创造出独特的视觉韵律。</p>
+                    <h2 class="card-title">流 动</h2>
+                    <p class="card-description">文字在画布上自由舞动，打破静态的束缚，探索字符的韵律与呼吸。</p>
                 </div>
             </a>
+
+            <!-- 2. 诗歌与乱码 -->
             <a href="poem.html" class="work-card">
                 <div class="card-preview">
                     <div class="preview-poem">
-                        <span>0101</span><span>诗</span><span>歌</span><span>1010</span>
+                        <span>{</span> 诗 歌 <span>}</span><br>
+                        <span style="font-size: 12px; opacity: 0.6;">&lt;code&gt; / &lt;art&gt;</span>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h2 class="card-title">诗歌与乱码艺术</h2>
-                    <p class="card-description">诗歌与数字符号的交织，在虚实之间构建一个充满想象的空间。</p>
+                    <h2 class="card-title">构 建</h2>
+                    <p class="card-description">在理性的代码与感性的诗歌之间，寻找数字时代的表达边界。</p>
                 </div>
             </a>
+
+            <!-- 3. 书籍效果 -->
             <a href="test.html" class="work-card">
                 <div class="card-preview">
                     <div class="preview-book">
-                        <div class="book-page"></div>
-                        <div class="book-page"></div>
+                        <div class="book-mockup"></div>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h2 class="card-title">双页书籍效果</h2>
-                    <p class="card-description">模拟实体书籍的阅读体验，左右对开的页面呈现诗歌与随机符号的对话。</p>
+                    <h2 class="card-title">阅 读</h2>
+                    <p class="card-description">回归纸质阅读的仪式感，在数字屏幕上重现翻页的静谧时光。</p>
                 </div>
             </a>
+
+            <!-- 4. 拉萨地图 -->
             <a href="lhasa-map.html" class="work-card">
                 <div class="card-preview">
-                    <div class="preview-map"
-                        style="width: 100%; height: 100%; background: #fdfbf0; display: flex; justify-content: center; align-items: center; position: relative; overflow: hidden;">
-                        <div
-                            style="position: absolute; width: 100%; height: 100%; background-image: linear-gradient(#e8e0c8 1px, transparent 1px); background-size: 100% 30px; opacity: 0.5;">
-                        </div>
-                        <div
-                            style="width: 60px; height: 60px; background: #cc3300; border-radius: 50% 50% 0 50%; transform: rotate(45deg); border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 2;">
-                        </div>
-                        <div
-                            style="position: absolute; bottom: 40px; width: 120px; height: 12px; background: rgba(0,0,0,0.1); border-radius: 50%; filter: blur(4px);">
-                        </div>
+                    <div class="preview-map">
+                        <div class="map-grid"></div>
+                        <div class="map-pin"></div>
                     </div>
                 </div>
                 <div class="card-content">
-                    <h2 class="card-title">拉萨 · 寻隐</h2>
+                    <h2 class="card-title">寻 隐</h2>
                     <p class="card-description">一张泛黄的艺术地图，带你探寻拉萨深处的隐秘寺院与信仰故事。</p>
                 </div>
             </a>
         </div>
+
+        <div style="text-align: center;">
+            <a href="https://github.com/Missmudodo/MirrorLand" class="github-link" target="_blank">
+                <svg class="github-icon" viewBox="0 0 16 16" width="20" height="20">
+                    <path
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                </svg>
+                GitHub Repository
+            </a>
+        </div>
     </div>
-    <a href="https://github.com/Missmudodo/MirrorLand" class="github-link" target="_blank">
-        <svg class="github-icon" viewBox="0 0 16 16" fill="white">
-            <path
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
-            </path>
-        </svg>
-        访问我的GitHub
-    </a>
 </body>
 
 </html>
