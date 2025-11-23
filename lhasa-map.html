@@ -7,113 +7,172 @@
     <title>拉萨深度游：全景艺术地图</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.css" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #fdfbf0;
+            --sidebar-bg: #fdfbf0;
+            --text-primary: #3e2723;
+            --text-secondary: #5d4037;
+            --accent-color: #8B4513;
+            --highlight-color: #cc3300;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: "Kaiti SC", "STKaiti", "楷体", serif;
             display: flex;
             height: 100vh;
-            background-color: #fdfbf0;
+            background-color: var(--bg-color);
             overflow: hidden;
+            color: var(--text-primary);
         }
 
         #map {
             flex: 7;
             height: 100%;
-            border-right: 4px solid #8B4513;
+            border-right: 1px solid rgba(139, 69, 19, 0.2);
             background-color: #f0e6d2;
+            z-index: 1;
         }
 
-        /* 地图滤镜：复古暖色调 */
+        /* Map Filter: Vintage Warm Tone */
         .leaflet-tile-pane {
-            filter: sepia(0.4) contrast(0.95) brightness(1.02) hue-rotate(-5deg);
-            -webkit-filter: sepia(0.4) contrast(0.95) brightness(1.02) hue-rotate(-5deg);
+            filter: sepia(0.3) contrast(0.95) brightness(1.02) hue-rotate(-5deg);
         }
 
         #sidebar {
             flex: 3;
-            padding: 25px;
-            box-shadow: -5px 0 20px rgba(60, 40, 10, 0.15);
+            padding: 40px;
+            box-shadow: -5px 0 30px rgba(60, 40, 10, 0.08);
             overflow-y: auto;
-            background-image: linear-gradient(#e8e0c8 1px, transparent 1px);
-            background-size: 100% 30px;
-            background-color: #fdfbf0;
+            background-image: linear-gradient(var(--sidebar-bg) 0%, var(--sidebar-bg) 100%), linear-gradient(#e8e0c8 1px, transparent 1px);
+            background-size: 100% 100%, 100% 30px;
+            background-blend-mode: normal, multiply;
             z-index: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
         }
 
         h1 {
             color: #8B0000;
-            margin-top: 0;
-            letter-spacing: 2px;
-            font-size: 26px;
+            margin: 0 0 20px 0;
+            letter-spacing: 4px;
+            font-size: 32px;
+            font-weight: normal;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 15px;
+            display: inline-block;
         }
 
         h2 {
-            color: #5c3d1f;
-            border-bottom: 2px solid #8B4513;
-            padding-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 20px;
             margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         p {
-            line-height: 30px;
-            color: #3e2723;
+            line-height: 1.8;
             font-size: 16px;
+            margin-bottom: 20px;
+            text-align: justify;
         }
 
         .tip {
-            background: rgba(255, 193, 7, 0.15);
-            padding: 10px;
-            border-radius: 4px;
+            background: rgba(139, 69, 19, 0.05);
+            padding: 20px;
+            border-radius: 2px;
             font-size: 14px;
-            margin-bottom: 20px;
-            color: #856404;
-            border: 1px dashed #856404;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-color);
+            font-style: italic;
         }
 
         .hand-drawn-marker {
-            background-color: #cc3300;
-            width: 16px;
-            height: 16px;
+            background-color: var(--highlight-color);
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: 3px solid #fff;
-            box-shadow: 0 0 0 2px #cc3300, 3px 3px 5px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px var(--highlight-color), 2px 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .leaflet-marker-icon:hover .hand-drawn-marker {
-            transform: scale(1.3);
+            transform: scale(1.5);
             background-color: #ff4400;
+            box-shadow: 0 0 0 4px rgba(255, 68, 0, 0.3), 4px 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .image-frame {
             width: 100%;
-            height: 220px;
+            height: 240px;
             overflow: hidden;
-            border-radius: 8px;
-            border: 3px solid #8B4513;
-            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-            background-color: #e0d8c0;
+            border-radius: 4px;
+            border: 8px solid #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            background-color: #f5f5f5;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .image-frame:hover {
+            transform: translateY(-2px);
         }
 
         svg {
             width: 100%;
             height: 100%;
-            transition: transform 1s ease;
+            transition: transform 1.5s ease;
         }
 
         .image-frame:hover svg {
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
-        .leaflet-control-attribution a {
-            text-decoration: none;
-            color: #666;
+        #content {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .meta-info {
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 1px dashed rgba(139, 69, 19, 0.3);
+            font-size: 13px;
+            color: #888;
         }
 
         @media (max-width: 768px) {
@@ -122,15 +181,16 @@
             }
 
             #map {
-                height: 50%;
+                height: 50vh;
                 flex: none;
                 border-right: none;
-                border-bottom: 4px solid #8B4513;
+                border-bottom: 1px solid rgba(139, 69, 19, 0.2);
             }
 
             #sidebar {
-                height: 50%;
+                height: 50vh;
                 flex: none;
+                padding: 25px;
             }
         }
     </style>
@@ -139,13 +199,16 @@
 <body>
     <div id="map"></div>
     <div id="sidebar">
-        <a href="index.html"
-            style="display: inline-block; margin-bottom: 20px; text-decoration: none; color: #8B4513; font-size: 14px;">&larr;
-            Back to Gallery</a>
-        <h1>🎨 拉萨寺院游</h1>
-        <div class="tip">✨
-            西藏寺庙建筑就其数量、规模、影响和建筑特色而言，当数苯教寺庙和藏传佛教寺庙。早期的苯教寺庙有贤达顶寺、甲莫寺、雍仲拉顶寺和雍仲林寺，其中的雍仲林寺成为西藏遗存的苯教主要寺庙之一。藏传佛教寺庙是随佛教在西藏的传播逐渐建立起来的，并成为西藏古建筑的主体。吐蕃王朝松赞干布时期，西藏就建有大、小昭寺和108座神殿，但这些都不能算作寺庙。直到779年桑耶寺的建立，寺内有了正式剃度僧人，标志着西藏有了第一座佛、法、僧三宝俱全的寺庙。此后，佛教在西藏不断发展壮大，寺庙逐渐增多，其中一些大的寺庙往往既是宗教活动的场所，又是一些地区的政治、经济、文化的中心和财富的聚集地。佛教逐步渗透到西藏的经济文化当中，西藏寺庙也形成了不同于内地寺庙的特点，一些较大的寺庙除进行宗教活动外，修习佛经也是一项主要活动，寺庙内设有经学院，如哲蚌寺的罗色林扎仓、色拉寺的吉扎仓等。
+        <div>
+            <a href="index.html" class="back-link">
+                <span style="margin-right: 8px;">←</span> Back to Gallery
+            </a>
+            <h1>🎨 拉萨寺院游</h1>
+            <div class="tip">✨
+                西藏寺庙建筑就其数量、规模、影响和建筑特色而言，当数苯教寺庙和藏传佛教寺庙。早期的苯教寺庙有贤达顶寺、甲莫寺、雍仲拉顶寺和雍仲林寺，其中的雍仲林寺成为西藏遗存的苯教主要寺庙之一。藏传佛教寺庙是随佛教在西藏的传播逐渐建立起来的，并成为西藏古建筑的主体。吐蕃王朝松赞干布时期，西藏就建有大、小昭寺和108座神殿，但这些都不能算作寺庙。直到779年桑耶寺的建立，寺内有了正式剃度僧人，标志着西藏有了第一座佛、法、僧三宝俱全的寺庙。此后，佛教在西藏不断发展壮大，寺庙逐渐增多，其中一些大的寺庙往往既是宗教活动的场所，又是一些地区的政治、经济、文化的中心和财富的聚集地。佛教逐步渗透到西藏的经济文化当中，西藏寺庙也形成了不同于内地寺庙的特点，一些较大的寺庙除进行宗教活动外，修习佛经也是一项主要活动，寺庙内设有经学院，如哲蚌寺的罗色林扎仓、色拉寺的吉扎仓等。
+            </div>
         </div>
+
         <div id="content">
             <h2>准备出发</h2>
             <p>这是一张为您定制的专属艺术地图。</p>
@@ -153,140 +216,73 @@
             <p>点击地图上的红点，发现拉萨的另一面。</p>
         </div>
 
-        <div style="margin-top: 40px; border-top: 2px dashed #dcd0b0; padding-top: 20px;">
-            <h2>Design Philosophy</h2>
-            <p style="font-size: 14px; color: #666;">
-                <b>复古与现代的交融：</b> 本地图采用了 Sepia 滤镜处理的底图，配合手绘风格的 SVG 图标，旨在营造一种“泛黄羊皮卷”的探险感。
-            </p>
-            <p style="font-size: 14px; color: #666;">
-                <b>交互体验：</b> 摒弃了传统的弹窗，采用左侧侧边栏动态更新的方式，让用户在浏览地图的同时，能够沉浸式地阅读每一个地点的故事。
-            </p>
-            <p style="font-size: 14px; color: #666;">
-                <b>技术栈：</b> Leaflet.js 用于地图渲染，原生 SVG 用于绘制独一无二的地标插画。
-            </p>
+        <div class="meta-info">
+            <p><b>设计理念：</b> 泛黄羊皮卷风格，Sepia 滤镜底图，手绘 SVG 图标。</p>
+            <p><b>技术实现：</b> Leaflet.js + 原生 SVG。</p>
         </div>
     </div>
+
     <script src="https://cdn.bootcdn.net/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script>
-        var map = L.map('map', { zoomControl: false }).setView([29.6525, 91.1250], 13);
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView([29.6525, 91.1250], 13);
         L.control.zoom({ position: 'bottomright' }).addTo(map);
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 19 }).addTo(map);
-        var handDrawnIcon = L.divIcon({ className: 'custom-div-icon', html: "<div class='hand-drawn-marker'></div>", iconSize: [22, 22], iconAnchor: [11, 11] });
+
+        // CartoDB Voyager - nice clean map style
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        const handDrawnIcon = L.divIcon({
+            className: 'custom-div-icon',
+            html: "<div class='hand-drawn-marker'></div>",
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        });
+
+        // SVG Templates
+        const svgs = {
+            potala: `<svg viewBox="0 0 400 300"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#E0F7FA"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky)"/><path d="M0,300 L400,300 L400,250 Q200,150 0,250 Z" fill="#8D6E63"/><rect x="50" y="150" width="300" height="100" fill="#F5F5F5"/><rect x="150" y="120" width="100" height="130" fill="#B71C1C"/><rect x="160" y="110" width="80" height="10" fill="#FFD700"/></svg>`,
+            jokhang: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFF8E1"/><rect x="50" y="150" width="300" height="100" fill="#5D4037"/><path d="M50,150 L100,100 L300,100 L350,150 Z" fill="#FFC107"/><circle cx="200" cy="80" r="30" fill="#FFD700" opacity="0.8"/><circle cx="100" cy="250" r="40" fill="#BDBDBD" opacity="0.5" filter="blur(10px)"/></svg>`,
+            barkhor: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#ECEFF1"/><rect x="20" y="100" width="100" height="200" fill="#FFF"/><rect x="280" y="100" width="100" height="200" fill="#FFF"/><path d="M20,100 Q200,180 380,100" stroke="#333" fill="none"/><path d="M50,115 L70,115 L60,135 Z" fill="blue"/><path d="M130,132 L150,132 L140,152 Z" fill="red"/><path d="M210,135 L230,135 L220,155 Z" fill="yellow"/></svg>`,
+            norbulingka: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#E8F5E9"/><circle cx="100" cy="200" r="60" fill="#4CAF50"/><circle cx="300" cy="200" r="70" fill="#388E3C"/><rect x="150" y="150" width="100" height="100" fill="#FFD54F"/><rect x="160" y="170" width="80" height="80" fill="#795548"/></svg>`,
+            sera: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#D7CCC8"/><path d="M0,0 L400,0 L400,100 Q200,150 0,100 Z" fill="#33691E" opacity="0.8"/><circle cx="150" cy="200" r="40" fill="#B71C1C"/><circle cx="250" cy="220" r="45" fill="#B71C1C"/><path d="M260,180 L280,160" stroke="#B71C1C" stroke-width="5"/></svg>`,
+            yaowang: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#CFD8DC"/><circle cx="300" cy="100" r="40" fill="#FF5722"/><path d="M0,300 L150,150 L300,300 Z" fill="#607D8B"/><path d="M200,300 L350,180 L400,300 Z" fill="#546E7A"/></svg>`,
+            ramoche: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFFDE7"/><path d="M50,200 L350,200 L320,150 L80,150 Z" fill="#A1887F"/> <path d="M100,150 L300,150 L250,100 L150,100 Z" fill="#FFD700"/> <rect x="120" y="200" width="160" height="80" fill="#8D6E63"/> <rect x="180" y="220" width="40" height="60" fill="#3E2723"/> </svg>`,
+            drepung: `<svg viewBox="0 0 400 300"><defs><linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8D6E63"/><stop offset="100%" stop-color="#5D4037"/></linearGradient></defs><rect width="400" height="300" fill="#E0F2F1"/><path d="M0,300 L400,300 L400,100 L0,200 Z" fill="url(#mountain)"/><rect x="50" y="180" width="60" height="40" fill="#FFF" stroke="#ccc"/><rect x="100" y="160" width="70" height="50" fill="#FFF" stroke="#ccc"/><rect x="160" y="140" width="80" height="60" fill="#FFF" stroke="#ccc"/><rect x="230" y="120" width="90" height="70" fill="#FFF" stroke="#ccc"/></svg>`,
+            zaki: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFF3E0"/><circle cx="200" cy="150" r="100" fill="#FFD700" opacity="0.2"/><path d="M170,220 Q160,180 180,160 L220,160 Q240,180 230,220 Z" fill="#795548"/><rect x="180" y="150" width="40" height="10" fill="#D7CCC8"/> <text x="190" y="200" fill="#FFD700" font-size="24">￥</text></svg>`,
+            canggu: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFFDE7"/><rect x="50" y="100" width="300" height="150" fill="#FDD835"/> <circle cx="100" cy="250" r="20" fill="#E91E63" opacity="0.8"/><circle cx="150" cy="260" r="25" fill="#4CAF50" opacity="0.8"/><circle cx="300" cy="250" r="20" fill="#E91E63" opacity="0.8"/><path d="M200,200 L200,150" stroke="#8D6E63" stroke-width="5"/> <circle cx="200" cy="140" r="40" fill="#81C784"/> </svg>`,
+            muru: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#ECEFF1"/><rect x="80" y="80" width="240" height="180" fill="#5D4037"/> <rect x="120" y="120" width="160" height="20" fill="#FFCC80"/> <rect x="120" y="160" width="160" height="20" fill="#FFCC80"/><rect x="120" y="200" width="160" height="20" fill="#FFCC80"/></svg>`,
+            pabonka: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#E3F2FD"/><path d="M100,300 Q150,150 300,280 L350,300 Z" fill="#616161"/><rect x="180" y="160" width="60" height="50" fill="#B71C1C"/><polygon points="170,160 250,160 210,130" fill="#FFD700"/></svg>`
+        };
 
         const locations = [
-            // --- 原有经典景点 ---
-            {
-                name: "布达拉宫",
-                coords: [29.6555, 91.1185],
-                desc: "<b>布达拉宫</b><br>布达拉宫和大昭寺，坐落在拉萨河谷中心海拔3700米的红色山峰之上，是集行政、宗教、政治事务于一体的综合性建筑。它由白宫和红宫及其附属建筑组成。布达拉宫自公元七世纪起就成为达赖喇嘛的冬宫，象征着西藏佛教和历代行政统治的中心。优美而又独具匠心的建筑、华美绚丽的装饰、与天然美景间的和谐融洽，使布达拉宫在历史和宗教特色之外平添几分风采。大昭寺是一组极具特色的佛教建筑群。建造于公元18世纪罗布林卡，是达赖喇嘛的夏宫，也是西藏艺术的杰作。",
-                svg: `<svg viewBox="0 0 400 300"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#E0F7FA"/></linearGradient></defs><rect width="400" height="300" fill="url(#sky)"/><path d="M0,300 L400,300 L400,250 Q200,150 0,250 Z" fill="#8D6E63"/><rect x="50" y="150" width="300" height="100" fill="#F5F5F5"/><rect x="150" y="120" width="100" height="130" fill="#B71C1C"/><rect x="160" y="110" width="80" height="10" fill="#FFD700"/></svg>`
-            },
-            {
-                name: "大昭寺",
-                coords: [29.6532, 91.1320],
-                desc: "<b>大昭寺</b><br>大昭寺始建于七世纪吐蕃王朝的鼎盛时期，位于西藏自治区拉萨市中心。大昭寺被认为是拉萨的“城市精神中心”和西藏最神圣的寺庙。拉萨之所以有“圣地”之誉，与这座佛像有关。寺庙最初称“惹萨”，后来惹萨又成为这座城市的名称，并演化成当下的“拉萨”。环大昭寺内中心的释迦牟尼佛殿一圈称为“囊廓”，环大昭寺外墙一圈称为“八廓”，大昭寺外辐射出的街道叫“八廓街”即八角街。以大昭寺为中心，将布达拉宫、药王山、小昭寺包括进来的一大圈称为“林廓”。这从内到外的三个环型，便是藏民们行转经仪式的路线。大昭寺是西藏现存最辉煌的吐蕃时期的建筑，也是西藏现存最古老的土木结构建筑，开创了藏式平川式的寺庙布局规式。大昭寺融合了藏、唐、尼泊尔、印度的建筑风格，成为藏式宗教建筑的千古典范。寺内供有释迦牟尼十二岁等身赤金像及众多的佛像和唐卡等。2000年，大昭寺作为布达拉宫的扩展项目被列为世界文化遗产。",
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFF8E1"/><rect x="50" y="150" width="300" height="100" fill="#5D4037"/><path d="M50,150 L100,100 L300,100 L350,150 Z" fill="#FFC107"/><circle cx="200" cy="80" r="30" fill="#FFD700" opacity="0.8"/><circle cx="100" cy="250" r="40" fill="#BDBDBD" opacity="0.5" filter="blur(10px)"/></svg>`
-            },
-            {
-                name: "八廓街",
-                coords: [29.6528, 91.1335],
-                desc: "<b>八廓街</b><br>八廓街，又称八角街，是位于拉萨市中心的著名历史文化和商业街区，围绕大昭寺而建，是藏传佛教信徒的重要转经道。它不仅是一条宗教“圣路”，也是拉萨最繁华的商业中心之一，保留了拉萨古城的风貌，是体验当地生活和购物的好去处。",
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#ECEFF1"/><rect x="20" y="100" width="100" height="200" fill="#FFF"/><rect x="280" y="100" width="100" height="200" fill="#FFF"/><path d="M20,100 Q200,180 380,100" stroke="#333" fill="none"/><path d="M50,115 L70,115 L60,135 Z" fill="blue"/><path d="M130,132 L150,132 L140,152 Z" fill="red"/><path d="M210,135 L230,135 L220,155 Z" fill="yellow"/></svg>`
-            },
-            {
-                name: "罗布林卡",
-                coords: [29.6530, 91.0940],
-                desc: "<b>罗布林卡</b><br>高原园林。绿树掩映下的金色宫殿，宁静而美好。",
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#E8F5E9"/><circle cx="100" cy="200" r="60" fill="#4CAF50"/><circle cx="300" cy="200" r="70" fill="#388E3C"/><rect x="150" y="150" width="100" height="100" fill="#FFD54F"/><rect x="160" y="170" width="80" height="80" fill="#795548"/></svg>`
-            },
-            {
-                name: "色拉寺",
-                coords: [29.6945, 91.1330],
-                desc: "<b>色拉寺</b><br>色拉寺位于西藏拉萨市区北郊的乌孜山南麓，是藏传佛教格鲁派六大寺院之一，由宗喀巴的弟子“大慈法王”绛钦却杰在公元15世纪初创建。1982年，色拉寺被中华人民共和国国务院公布为第二批全国重点文物保护单位之一。色拉寺内有佛像近万座，此外壁画、典籍、唐卡（佛教卷轴画）、经幡、挂幢等也都遍布各殿。其中最重要的是一套用朱砂汁书写的藏汉文对照《甘珠尔》（大藏经），乃明成祖馈赠绛钦却杰之物。这是世界上第一部用藏文书写的佛经版本，在藏传佛教界和版本学领域内都具有非凡的价值。此外如金泥书写的《大般若经》、白檀木雕刻的十六尊者像、金汁绘就的释迦牟尼转法轮唐卡和大慈法王缂丝像等也都是弥足珍贵之物。色拉寺喇嘛的一项为人熟知的功课是辩经。实际上这并非色拉寺独有，只是色拉寺的辩经功课每周一至周五下午固定进行，且向游人开放，故最为著名。比平时的辩经正式得多的是定期举行的辩经法会，由高僧们展开关于佛法的讨论乃至辩论。而每日的辩经，则是众喇嘛参悟奥义、提高修为的一种辅助方法。",
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#D7CCC8"/><path d="M0,0 L400,0 L400,100 Q200,150 0,100 Z" fill="#33691E" opacity="0.8"/><circle cx="150" cy="200" r="40" fill="#B71C1C"/><circle cx="250" cy="220" r="45" fill="#B71C1C"/><path d="M260,180 L280,160" stroke="#B71C1C" stroke-width="5"/></svg>`
-            },
-            {
-                name: "药王山",
-                coords: [29.6540, 91.1160],
-                desc: "<b>药王山</b><br>日出时分。这里是拍摄布达拉宫最经典角度的地方。",
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#CFD8DC"/><circle cx="300" cy="100" r="40" fill="#FF5722"/><path d="M0,300 L150,150 L300,300 Z" fill="#607D8B"/><path d="M200,300 L350,180 L400,300 Z" fill="#546E7A"/></svg>`
-            },
-
-            // --- 新增特色寺庙 ---
-            {
-                name: "小昭寺",
-                coords: [29.6580, 91.1325],
-                desc: "<b>小昭寺 (Ramoche Temple)</b><br>小昭寺建于公元641年（藏历铁牛年），相传是由文成公主亲自奠基建造的，位于拉萨古城以北，与大昭寺相距约1千米，总占地面积约4000平方米。寺庙取名“甲达热木齐祖拉康”，意为“汉虎神变寺”。小昭寺是汉语称谓；小，是与大昭寺相对应而言；昭，是藏语“觉卧”的音译，意思是佛。寺内供有释迦牟尼八岁等身赤金像及众多的佛像和唐卡等2001年被列为全国重点文物保护单位。",
-                // 抽象画：汉式双重檐屋顶
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFFDE7"/>
-                      <path d="M50,200 L350,200 L320,150 L80,150 Z" fill="#A1887F"/> <path d="M100,150 L300,150 L250,100 L150,100 Z" fill="#FFD700"/> <rect x="120" y="200" width="160" height="80" fill="#8D6E63"/> <rect x="180" y="220" width="40" height="60" fill="#3E2723"/> </svg>`
-            },
-            {
-                name: "哲蚌寺",
-                coords: [29.6750, 91.0460],
-                desc: "<b>哲蚌寺 (Drepung Monastery)</b><br>哲蚌寺系藏传佛教格鲁派六大寺庙之一，藏语意为“堆米寺”或“积米寺”，藏文全称意为“吉祥积米十方尊胜州”。它坐落在拉萨市西郊约十公里的根培乌孜山南坡的坳里，由格鲁派创始人宗喀巴之弟子降央曲吉-扎西班丹于1416年创建。拥有141个庄园与540多个牧场，是藏传佛教最大的寺庙。每逢藏历6月30日(阳历在每年八月下旬左右)天不亮，人们纷纷披星戴月从四面八方徒步聚集在哲蚌寺山下等待着雪顿节开幕式的第一项——展佛。",
-                // 抽象画：堆叠的白色几何体 (米堆意象)
-                svg: `<svg viewBox="0 0 400 300"><defs><linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8D6E63"/><stop offset="100%" stop-color="#5D4037"/></linearGradient></defs>
-                      <rect width="400" height="300" fill="#E0F2F1"/>
-                      <path d="M0,300 L400,300 L400,100 L0,200 Z" fill="url(#mountain)"/>
-                      <rect x="50" y="180" width="60" height="40" fill="#FFF" stroke="#ccc"/>
-                      <rect x="100" y="160" width="70" height="50" fill="#FFF" stroke="#ccc"/>
-                      <rect x="160" y="140" width="80" height="60" fill="#FFF" stroke="#ccc"/>
-                      <rect x="230" y="120" width="90" height="70" fill="#FFF" stroke="#ccc"/>
-                      </svg>`
-            },
-            {
-                name: "扎基寺",
-                coords: [29.6720, 91.1400],
-                desc: "<b>扎基寺 (Zaki Temple)</b><br>扎基寺位于拉萨市扎基东路。依照流传的说法，扎基寺的名字出自起初建寺时只有四位僧人（僧人在藏语中称“扎巴”，“基”是藏语数字“四”在汉译后的变音）。扎基寺的扎基拉姆，以灵验而闻名，尤其是在财运方面。如今到扎基寺朝拜者，无论是汉人还是藏人，多为求财而来。朝拜者在门口购买供品，将桑枝投入寺外的煨桑炉，随后携白酒、哈达进入殿堂。",
-                // 抽象画：金色财运 + 酒坛 (供品)
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFF3E0"/>
-                      <circle cx="200" cy="150" r="100" fill="#FFD700" opacity="0.2"/>
-                      <path d="M170,220 Q160,180 180,160 L220,160 Q240,180 230,220 Z" fill="#795548"/>
-                      <rect x="180" y="150" width="40" height="10" fill="#D7CCC8"/> <text x="190" y="200" fill="#FFD700" font-size="24">￥</text>
-                      </svg>`
-            },
-            {
-                name: "仓姑寺",
-                coords: [29.6500, 91.1360],
-                desc: "<b>仓姑寺 (Ani Tsankhung)</b><br>仓姑寺位于西藏拉萨古城内，是藏传佛教格鲁派寺庙。也是拉萨城内唯一的一座尼姑寺庙。该寺在藏传佛教界享有较高的声望。",
-                // 抽象画：黄色墙体 + 花草 (柔和感)
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#FFFDE7"/>
-                      <rect x="50" y="100" width="300" height="150" fill="#FDD835"/> <circle cx="100" cy="250" r="20" fill="#E91E63" opacity="0.8"/>
-                      <circle cx="150" cy="260" r="25" fill="#4CAF50" opacity="0.8"/>
-                      <circle cx="300" cy="250" r="20" fill="#E91E63" opacity="0.8"/>
-                      <path d="M200,200 L200,150" stroke="#8D6E63" stroke-width="5"/> <circle cx="200" cy="140" r="40" fill="#81C784"/> </svg>`
-            },
-            {
-                name: "木如寺",
-                coords: [29.6540, 91.1350],
-                desc: "<b>木如寺 (Muru Monastery)</b><br>拉萨境内有新、旧两座。旧木如寺位于大昭寺东北部，吐蕃时期属藏传佛教宁玛派。新木如寺始建于五世达赖喇嘛时期，又称“木鹿寺”。新木如寺坐北朝南。每年藏历十二月二十三日至二十九日，木如寺均举行隆重的年祭跳神舞木如古朵。现寺院为西藏佛教协会印经院。",
-                // 抽象画：深红与经书 (古朴感)
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#ECEFF1"/>
-                      <rect x="80" y="80" width="240" height="180" fill="#5D4037"/> <rect x="120" y="120" width="160" height="20" fill="#FFCC80"/> <rect x="120" y="160" width="160" height="20" fill="#FFCC80"/>
-                      <rect x="120" y="200" width="160" height="20" fill="#FFCC80"/>
-                      </svg>`
-            },
-            {
-                name: "帕崩岗",
-                coords: [29.7030, 91.1120],
-                desc: "<b>帕崩岗 (Pabonka Hermitage)</b><br>帕崩岗，藏语的意思是巨石上的宫殿，位于拉萨北郊娘热山上。帕崩岗，当地人俗称帕邦喀，据说在千年之前，松赞干布和文成公主曾在此居住过，当年松赞干布在此闭关取材修筑了大昭寺，同时这里也是藏文的诞生地。帕崩岗的佛殿内，至今仍保存着西藏历史上第一块藏文六字真言的石雕。",
-                // 抽象画：巨石 + 上面的小庙
-                svg: `<svg viewBox="0 0 400 300"><rect width="400" height="300" fill="#E3F2FD"/>
-                      <path d="M100,300 Q150,150 300,280 L350,300 Z" fill="#616161"/>
-                      <rect x="180" y="160" width="60" height="50" fill="#B71C1C"/>
-                      <polygon points="170,160 250,160 210,130" fill="#FFD700"/>
-                      </svg>`
-            }
+            { name: "布达拉宫", coords: [29.6555, 91.1185], svg: svgs.potala, desc: "<b>布达拉宫</b><br>布达拉宫和大昭寺，坐落在拉萨河谷中心海拔3700米的红色山峰之上，是集行政、宗教、政治事务于一体的综合性建筑。它由白宫和红宫及其附属建筑组成。布达拉宫自公元七世纪起就成为达赖喇嘛的冬宫，象征着西藏佛教和历代行政统治的中心。优美而又独具匠心的建筑、华美绚丽的装饰、与天然美景间的和谐融洽，使布达拉宫在历史和宗教特色之外平添几分风采。大昭寺是一组极具特色的佛教建筑群。建造于公元18世纪罗布林卡，是达赖喇嘛的夏宫，也是西藏艺术的杰作。" },
+            { name: "大昭寺", coords: [29.6532, 91.1320], svg: svgs.jokhang, desc: "<b>大昭寺</b><br>大昭寺始建于七世纪吐蕃王朝的鼎盛时期，位于西藏自治区拉萨市中心。大昭寺被认为是拉萨的“城市精神中心”和西藏最神圣的寺庙。拉萨之所以有“圣地”之誉，与这座佛像有关。寺庙最初称“惹萨”，后来惹萨又成为这座城市的名称，并演化成当下的“拉萨”。环大昭寺内中心的释迦牟尼佛殿一圈称为“囊廓”，环大昭寺外墙一圈称为“八廓”，大昭寺外辐射出的街道叫“八廓街”即八角街。以大昭寺为中心，将布达拉宫、药王山、小昭寺包括进来的一大圈称为“林廓”。这从内到外的三个环型，便是藏民们行转经仪式的路线。大昭寺是西藏现存最辉煌的吐蕃时期的建筑，也是西藏现存最古老的土木结构建筑，开创了藏式平川式的寺庙布局规式。大昭寺融合了藏、唐、尼泊尔、印度的建筑风格，成为藏式宗教建筑的千古典范。寺内供有释迦牟尼十二岁等身赤金像及众多的佛像和唐卡等。2000年，大昭寺作为布达拉宫的扩展项目被列为世界文化遗产。" },
+            { name: "八廓街", coords: [29.6528, 91.1335], svg: svgs.barkhor, desc: "<b>八廓街</b><br>八廓街，又称八角街，是位于拉萨市中心的著名历史文化和商业街区，围绕大昭寺而建，是藏传佛教信徒的重要转经道。它不仅是一条宗教“圣路”，也是拉萨最繁华的商业中心之一，保留了拉萨古城的风貌，是体验当地生活和购物的好去处。" },
+            { name: "罗布林卡", coords: [29.6530, 91.0940], svg: svgs.norbulingka, desc: "<b>罗布林卡</b><br>高原园林。绿树掩映下的金色宫殿，宁静而美好。" },
+            { name: "色拉寺", coords: [29.6945, 91.1330], svg: svgs.sera, desc: "<b>色拉寺</b><br>色拉寺位于西藏拉萨市区北郊的乌孜山南麓，是藏传佛教格鲁派六大寺院之一，由宗喀巴的弟子“大慈法王”绛钦却杰在公元15世纪初创建。1982年，色拉寺被中华人民共和国国务院公布为第二批全国重点文物保护单位之一。色拉寺内有佛像近万座，此外壁画、典籍、唐卡（佛教卷轴画）、经幡、挂幢等也都遍布各殿。其中最重要的是一套用朱砂汁书写的藏汉文对照《甘珠尔》（大藏经），乃明成祖馈赠绛钦却杰之物。这是世界上第一部用藏文书写的佛经版本，在藏传佛教界和版本学领域内都具有非凡的价值。此外如金泥书写的《大般若经》、白檀木雕刻的十六尊者像、金汁绘就的释迦牟尼转法轮唐卡和大慈法王缂丝像等也都是弥足珍贵之物。色拉寺喇嘛的一项为人熟知的功课是辩经。实际上这并非色拉寺独有，只是色拉寺的辩经功课每周一至周五下午固定进行，且向游人开放，故最为著名。比平时的辩经正式得多的是定期举行的辩经法会，由高僧们展开关于佛法的讨论乃至辩论。而每日的辩经，则是众喇嘛参悟奥义、提高修为的一种辅助方法。" },
+            { name: "药王山", coords: [29.6540, 91.1160], svg: svgs.yaowang, desc: "<b>药王山</b><br>日出时分。这里是拍摄布达拉宫最经典角度的地方。" },
+            { name: "小昭寺", coords: [29.6580, 91.1325], svg: svgs.ramoche, desc: "<b>小昭寺 (Ramoche Temple)</b><br>小昭寺建于公元641年（藏历铁牛年），相传是由文成公主亲自奠基建造的，位于拉萨古城以北，与大昭寺相距约1千米，总占地面积约4000平方米。寺庙取名“甲达热木齐祖拉康”，意为“汉虎神变寺”。小昭寺是汉语称谓；小，是与大昭寺相对应而言；昭，是藏语“觉卧”的音译，意思是佛。寺内供有释迦牟尼八岁等身赤金像及众多的佛像和唐卡等2001年被列为全国重点文物保护单位。" },
+            { name: "哲蚌寺", coords: [29.6750, 91.0460], svg: svgs.drepung, desc: "<b>哲蚌寺 (Drepung Monastery)</b><br>哲蚌寺系藏传佛教格鲁派六大寺庙之一，藏语意为“堆米寺”或“积米寺”，藏文全称意为“吉祥积米十方尊胜州”。它坐落在拉萨市西郊约十公里的根培乌孜山南坡的坳里，由格鲁派创始人宗喀巴之弟子降央曲吉-扎西班丹于1416年创建。拥有141个庄园与540多个牧场，是藏传佛教最大的寺庙。每逢藏历6月30日(阳历在每年八月下旬左右)天不亮，人们纷纷披星戴月从四面八方徒步聚集在哲蚌寺山下等待着雪顿节开幕式的第一项——展佛。" },
+            { name: "扎基寺", coords: [29.6720, 91.1400], svg: svgs.zaki, desc: "<b>扎基寺 (Zaki Temple)</b><br>扎基寺位于拉萨市扎基东路。依照流传的说法，扎基寺的名字出自起初建寺时只有四位僧人（僧人在藏语中称“扎巴”，“基”是藏语数字“四”在汉译后的变音）。扎基寺的扎基拉姆，以灵验而闻名，尤其是在财运方面。如今到扎基寺朝拜者，无论是汉人还是藏人，多为求财而来。朝拜者在门口购买供品，将桑枝投入寺外的煨桑炉，随后携白酒、哈达进入殿堂。" },
+            { name: "仓姑寺", coords: [29.6500, 91.1360], svg: svgs.canggu, desc: "<b>仓姑寺 (Ani Tsankhung)</b><br>仓姑寺位于西藏拉萨古城内，是藏传佛教格鲁派寺庙。也是拉萨城内唯一的一座尼姑寺庙。该寺在藏传佛教界享有较高的声望。" },
+            { name: "木如寺", coords: [29.6540, 91.1350], svg: svgs.muru, desc: "<b>木如寺 (Muru Monastery)</b><br>拉萨境内有新、旧两座。旧木如寺位于大昭寺东北部，吐蕃时期属藏传佛教宁玛派。新木如寺始建于五世达赖喇嘛时期，又称“木鹿寺”。新木如寺坐北朝南。每年藏历十二月二十三日至二十九日，木如寺均举行隆重的年祭跳神舞木如古朵。现寺院为西藏佛教协会印经院。" },
+            { name: "帕崩岗", coords: [29.7030, 91.1120], svg: svgs.pabonka, desc: "<b>帕崩岗 (Pabonka Hermitage)</b><br>帕崩岗，藏语的意思是巨石上的宫殿，位于拉萨北郊娘热山上。帕崩岗，当地人俗称帕邦喀，据说在千年之前，松赞干布和文成公主曾在此居住过，当年松赞干布在此闭关取材修筑了大昭寺，同时这里也是藏文的诞生地。帕崩岗的佛殿内，至今仍保存着西藏历史上第一块藏文六字真言的石雕。" }
         ];
 
         locations.forEach(function (loc) {
             var marker = L.marker(loc.coords, { icon: handDrawnIcon }).addTo(map);
             marker.on('click', function () {
-                document.getElementById('content').innerHTML = `
-                    <div class="image-frame">${loc.svg}</div>
-                    <h2>${loc.name}</h2><p>${loc.desc}</p>
-                `;
+                const content = document.getElementById('content');
+                content.style.opacity = 0;
+                setTimeout(() => {
+                    content.innerHTML = `
+                        <div class="image-frame">${loc.svg}</div>
+                        <h2>${loc.name}</h2><p>${loc.desc}</p>
+                    `;
+                    content.style.opacity = 1;
+                }, 200);
                 map.flyTo(loc.coords, 14, { animate: true, duration: 1.2 });
             });
         });
