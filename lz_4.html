@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBERFOLIO // 边缘虚化版</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0; padding: 0; background: #000; overflow: hidden;
+            font-family: 'Orbitron', sans-serif; user-select: none;
+        }
+
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+            pointer-events: none; z-index: 99;
+        }
+
+        #controls {
+            position: absolute; top: 30px; left: 30px; z-index: 100;
+            background: rgba(10, 15, 25, 0.85); border: 1px solid #00f3ff;
+            padding: 25px; box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            color: #00f3ff; display: flex; flex-direction: column; gap: 15px;
+            text-transform: uppercase; letter-spacing: 1px; backdrop-filter: blur(8px);
+            min-width: 260px;
+        }
+
+        .panel-title {
+            font-size: 14px; font-weight: 700; margin-bottom: 5px; color: #fff;
+            text-shadow: 0 0 5px #00f3ff; border-bottom: 2px solid #00f3ff; padding-bottom: 5px;
+        }
+
+        .cyber-btn {
+            background: transparent; border: 2px solid #ff0055; color: #ff0055;
+            padding: 12px 24px; cursor: pointer; font-weight: 700;
+            font-family: 'Orbitron', sans-serif; text-align: center; transition: 0.3s;
+            text-transform: uppercase; text-shadow: 0 0 8px rgba(255, 0, 85, 0.8);
+            box-shadow: inset 0 0 10px rgba(255, 0, 85, 0.2);
+        }
+        .cyber-btn:hover {
+            background: #ff0055; color: #000; box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+        }
+        .nav-group { display: flex; gap: 10px; margin-top: 5px; }
+        .nav-btn {
+            flex: 1; padding: 15px; font-size: 20px; border-color: #00f3ff; color: #00f3ff;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.8);
+        }
+        .nav-btn:hover {
+            background: #00f3ff; color: #000; box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+
+        input[type="file"] { display: none; }
+        .instructions {
+            font-size: 11px; color: rgba(0, 243, 255, 0.7); line-height: 1.6;
+            border-left: 3px solid #ff0055; padding-left: 10px; margin-top: 5px;
+        }
+        .highlight { color: #fff; font-weight: bold; }
+        #canvas1 { display: block; width: 100%; height: 100%; cursor: crosshair; }
+        #statusText {
+            font-size: 12px; color: #ff0055; font-weight: bold; text-align: right; margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <div class="panel-title">CYBERFOLIO // VIGNETTE</div>
+        <label for="fileInput" class="cyber-btn">[ LOAD GALLERY ]</label>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <div class="nav-group">
+            <button id="prevBtn" class="cyber-btn nav-btn">&lt;</button>
+            <button id="nextBtn" class="cyber-btn nav-btn">&gt;</button>
+        </div>
+        <div class="instructions">
+            > MODE : SOFT EDGE BLEND<br>
+            > <span class="highlight">CLICK ARROWS TO SLIDE</span>
+        </div>
+        <div id="statusText">NO DATA</div>
+    </div>
+
+    <canvas id="canvas1"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas1');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let particlesArray = [];
+        let loadedImages = [];
+        let currentIndex = 0;
+        
+        const config = {
+            particleGap: 3,
+            mouseRadius: 80,
+            particleSize: 2.5,
+            friction: 0.94,
+            ease: 0.04,
+            trailOpacity: 0.15,
+            // === 新增：边缘虚化配置 ===
+            edgeFadeStart: 0.7, // 从中心向外 70% 的地方开始虚化
+            edgeFadePower: 2.0  // 虚化强度，越大边缘消失得越快
+        };
+
+        const mouse = { x: canvas.width / 2, y: canvas.height / 2, radius: config.mouseRadius };
+
+        window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mousedown', e => { mouse.x = e.x; mouse.y = e.y; explode(); });
+
+        function explode() {
+            const len = particlesArray.length;
+            if (len === 0) return;
+            for (let i = 0; i < len; i++) {
+                const p = particlesArray[i];
+                let dx = p.x - mouse.x; let dy = p.y - mouse.y;
+                let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+                const force = 40 * (0.6 + Math.random());
+                p.vx += (dx / dist) * force;
+                p.vy += (dy / dist) * force;
+            }
+        }
+
+        class Particle {
+            constructor(targetX, targetY, colorRgba, direction) {
+                this.originX = targetX;
+                this.originY = targetY;
+                // 存储 RGBA 颜色字符串
+                this.color = colorRgba;
+                this.size = config.particleSize;
+
+                const spread = canvas.height; 
+                if (direction === 'next') {
+                    this.x = canvas.width + Math.random() * 500 + 100;
+                    this.y = Math.random() * spread;
+                } else if (direction === 'prev') {
+                    this.x = -Math.random() * 500 - 100;
+                    this.y = Math.random() * spread;
+                } else {
+                    const angle = Math.random() * Math.PI * 2;
+                    const r = canvas.width;
+                    this.x = canvas.width/2 + Math.cos(angle) * r;
+                    this.y = canvas.height/2 + Math.sin(angle) * r;
+                }
+                this.vx = 0; this.vy = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size / 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+
+            update() {
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                let distSq = dx * dx + dy * dy;
+                if (distSq < mouse.radius * mouse.radius) {
+                    const dist = Math.sqrt(distSq);
+                    const force = (mouse.radius - dist) / mouse.radius;
+                    const angle = Math.atan2(dy, dx);
+                    this.vx -= Math.cos(angle) * force * 5;
+                    this.vy -= Math.sin(angle) * force * 5;
+                }
+                this.vx += (this.originX - this.x) * config.ease;
+                this.vy += (this.originY - this.y) * config.ease;
+                this.vx *= config.friction;
+                this.vy *= config.friction;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.draw();
+            }
+        }
+
+        const statusText = document.getElementById('statusText');
+        function setStatus(text) { statusText.innerText = text; }
+
+        function init(image, direction = 'center') {
+            particlesArray = [];
+            setStatus(`IMG ${currentIndex + 1} / ${loadedImages.length}`);
+
+            const maxWidth = canvas.width * 0.85;
+            const maxHeight = canvas.height * 0.85;
+            let imgW = image.width; let imgH = image.height;
+            const ratio = Math.min(maxWidth / imgW, maxHeight / imgH);
+            const newW = Math.floor(imgW * ratio);
+            const newH = Math.floor(imgH * ratio);
+            const startX = (canvas.width - newW) / 2;
+            const startY = (canvas.height - newH) / 2;
+
+            // === 计算图片中心点 ===
+            const centerX = newW / 2;
+            const centerY = newH / 2;
+
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = newW; tempCanvas.height = newH;
+            tempCtx.drawImage(image, 0, 0, newW, newH);
+            const pixels = tempCtx.getImageData(0, 0, newW, newH).data;
+
+            for (let y = 0; y < newH; y += config.particleGap) {
+                for (let x = 0; x < newW; x += config.particleGap) {
+                    const index = (y * newW + x) * 4;
+                    const originalAlpha = pixels[index + 3];
+
+                    if (originalAlpha > 10) {
+                        const r = pixels[index];
+                        const g = pixels[index + 1];
+                        const b = pixels[index + 2];
+
+                        // === 核心：计算边缘虚化 Alpha 值 ===
+                        // 1. 计算当前像素到图片中心的归一化距离 (0.0 - 1.0)
+                        // 这里使用简单的矩形距离算法，比圆形计算更快，效果也很好
+                        const distNormX = Math.abs(x - centerX) / centerX;
+                        const distNormY = Math.abs(y - centerY) / centerY;
+                        // 取长边作为主要距离依据
+                        const distNorm = Math.max(distNormX, distNormY);
+
+                        let fadeAlpha = 1.0;
+                        // 如果距离超过了设定的起始点 (edgeFadeStart)
+                        if (distNorm > config.edgeFadeStart) {
+                            // 计算超出部分在剩余区域的比例
+                            const fadeRatio = (distNorm - config.edgeFadeStart) / (1.0 - config.edgeFadeStart);
+                            // 使用幂函数来让衰减更平滑 (Power > 1 会让边缘消失得更快)
+                            fadeAlpha = 1.0 - Math.pow(fadeRatio, config.edgeFadePower);
+                        }
+                        
+                        // 确保 alpha 在合理范围内，并保留一点点底色防止完全消失
+                        fadeAlpha = Math.max(0.05, fadeAlpha);
+                        
+                        // 使用 rgba 格式，加入计算出的 fadeAlpha
+                        const colorRgba = `rgba(${r},${g},${b},${fadeAlpha})`;
+                        
+                        particlesArray.push(new Particle(startX + x, startY + y, colorRgba, direction));
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = `rgba(0, 0, 0, ${config.trailOpacity})`;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const len = particlesArray.length;
+            for (let i = 0; i < len; i++) { particlesArray[i].update(); }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        function nextSlide() {
+            if (loadedImages.length === 0) return;
+            currentIndex = (currentIndex + 1) % loadedImages.length;
+            init(loadedImages[currentIndex], 'next');
+        }
+        function prevSlide() {
+            if (loadedImages.length === 0) return;
+            currentIndex = (currentIndex - 1 + loadedImages.length) % loadedImages.length;
+            init(loadedImages[currentIndex], 'prev');
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', nextSlide);
+        document.getElementById('prevBtn').addEventListener('click', prevSlide);
+        window.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight') nextSlide();
+            if(e.key === 'ArrowLeft') prevSlide();
+        });
+
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length === 0) return;
+            loadedImages = []; currentIndex = 0; particlesArray = []; 
+            setStatus(`LOADING ${files.length}...`);
+            let loadedCount = 0;
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedImages.push(img);
+                        loadedCount++;
+                        if (loadedCount === files.length) {
+                            init(loadedImages[0], 'center');
+                        }
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            if (loadedImages.length > 0) init(loadedImages[currentIndex]);
+        });
+    </script>
+</body>
+</html>
